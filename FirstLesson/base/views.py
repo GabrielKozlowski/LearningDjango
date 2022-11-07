@@ -1,4 +1,4 @@
-from email import message
+from unicodedata import name
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
@@ -107,8 +107,15 @@ def room(request, pk):
 
 def userProfile(request, pk):
     user = User.objects.get(id=pk)
-    context = {'user': user}
+    rooms = user.room_set.all()  # type: ignore
+    room_messages = user.message_set.all()  # type: ignore
+    topics = Topic.objects.all()
+
+    context = {'user': user,'rooms': rooms, 'topics': topics,
+    'room_messages': room_messages}
     return render(request, 'base/profile.html', context)
+
+
 
 @login_required(login_url='login')
 def createRoom(request):
